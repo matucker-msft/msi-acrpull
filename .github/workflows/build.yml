@@ -14,17 +14,22 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@a4aa98b93cab29d9b1101a6143fb8bce00e2eac4 # v2.7.1
+      with:
+        egress-policy: audit
+
     - name: Check out code
-      uses: actions/checkout@v4
+      uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
       with:
         go-version-file: 'go.mod'
         cache: true
 
     - name: Linter
-      uses: golangci/golangci-lint-action@v4
+      uses: golangci/golangci-lint-action@d6238b002a20823d52840fda27e2d4891c5952dc # v4.0.1
       with:
         version: v1.54
       continue-on-error: true
@@ -36,7 +41,7 @@ jobs:
       run: make test
     
     - name: Upload code coverage
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192 # v1.5.2
       with:
         file: ./cover.out
         flags: unittests

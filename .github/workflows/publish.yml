@@ -11,12 +11,20 @@ on:
         type: string
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@a4aa98b93cab29d9b1101a6143fb8bce00e2eac4 # v2.7.1
+      with:
+        egress-policy: audit
+
     - name: Check out code
-      uses: actions/checkout@v4
+      uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
     - name: Get image metadata
       id: get_metadata
@@ -40,14 +48,19 @@ jobs:
     env:
       IMG: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ needs.setup.outputs.IMG }}
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@a4aa98b93cab29d9b1101a6143fb8bce00e2eac4 # v2.7.1
+      with:
+        egress-policy: audit
+
     - name: Check out code
-      uses: actions/checkout@v4
+      uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
     - name: Build the Docker image
       run: make docker-build
 
     - name: Run vulnerability scanner
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@7088d18dcb87884bc7b5a4000d5517d758e9aa13 # master
       with:
         image-ref: ${{ env.IMG }}
         format: table
